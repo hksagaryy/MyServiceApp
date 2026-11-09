@@ -1,43 +1,175 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="bn">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>মিস্ত্রি খুঁজুন</title>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyServiceApp - অন-ডিমান্ড সার্ভিস</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-        <style>
-            body {
-                font-family: sans-serif;
-                background: #f4f4f9;
-                padding: 15px;
-            }
-            .card {
-                background: #fff;
-                padding: 15px;
-                border-radius: 8px;
-                margin-bottom: 10px;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            }
-            .call-btn {
-                background: #28a745;
-                color: white;
-                padding: 10px 15px;
-                border: none;
-                border-radius: 5px;
-                text-decoration: none;
-                display: inline-block;
-                font-weight: bold;
-            }
-        </style>
-    </head>
-    <body>
-        <h2>ইলেকট্রিশিয়ান ও কার মিস্ত্রি সার্ভিস</h2>
+  <!-- ===== AUTH VIEW ===== -->
+  <section id="authView" class="auth-wrap">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="logo"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+        <h1>MyServiceApp</h1>
+        <p>আপনার দরজায় বিশ্বস্ত সার্ভিস</p>
+      </div>
 
-        <div class="card">
-            <h3>রহিম মিস্ত্রি</h3>
-            <p>ক্যাটাগরি: কার মিস্ত্রি</p>
-            <p>রেটিং: ⭐ 4.8</p>
-            <a href="tel:01700000000" class="call-btn">📞 সরাসরি কল দিন</a>
+      <div class="tabs">
+        <button class="tab active" id="tabLogin">লগইন</button>
+        <button class="tab" id="tabSignup">রেজিস্ট্রেশন</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label>ফোন নম্বর</label>
+          <input type="tel" id="loginPhone" placeholder="01XXXXXXXXX">
         </div>
-    </body>
+        <div class="field">
+          <label>পাসওয়ার্ড</label>
+          <input type="password" id="loginPass" placeholder="পাসওয়ার্ড দিন">
+        </div>
+        <div class="err" id="loginErr"></div>
+        <button type="submit" class="btn btn-primary">লগইন করুন</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signupForm" class="hidden" novalidate>
+        <div class="role-select">
+          <button type="button" class="role-btn active" data-role="customer"><i class="fa-solid fa-user"></i>কাস্টমার</button>
+          <button type="button" class="role-btn" data-role="worker"><i class="fa-solid fa-user-gear"></i>ওয়ার্কার / ওনার</button>
+        </div>
+        <div class="field">
+          <label>পূর্ণ নাম</label>
+          <input type="text" id="suName" placeholder="আপনার নাম">
+        </div>
+        <div class="field">
+          <label>ফোন নম্বর</label>
+          <input type="tel" id="suPhone" placeholder="01XXXXXXXXX">
+        </div>
+        <div class="field">
+          <label>ইমেইল</label>
+          <input type="email" id="suEmail" placeholder="example@gmail.com">
+        </div>
+
+        <div id="workerFields" class="hidden">
+          <div class="field">
+            <label>সার্ভিসের ধরন</label>
+            <select id="suCategory"></select>
+          </div>
+          <div class="field">
+            <label>প্রতি ঘণ্টার চার্জ (৳)</label>
+            <input type="number" id="suPrice" placeholder="যেমন: 400">
+          </div>
+          <div class="field">
+            <label>কাজের এলাকা</label>
+            <input type="text" id="suArea" placeholder="যেমন: মিরপুর, ঢাকা">
+          </div>
+          <div class="field">
+            <label>অভিজ্ঞতা</label>
+            <input type="text" id="suExp" placeholder="যেমন: ৫ বছর">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)</label>
+          <input type="password" id="suPass" placeholder="পাসওয়ার্ড দিন">
+        </div>
+        <div class="err" id="signupErr"></div>
+        <button type="submit" class="btn btn-primary">অ্যাকাউন্ট তৈরি করুন</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== CUSTOMER VIEW ===== -->
+  <section id="customerView" class="hidden">
+    <header class="topbar">
+      <div><h2 id="custGreeting">হ্যালো</h2><small>আজ কোন সার্ভিস দরকার?</small></div>
+      <button class="logout-btn" data-logout><i class="fa-solid fa-right-from-bracket"></i> লগআউট</button>
+    </header>
+
+    <main class="container">
+      <!-- Home tab -->
+      <div id="custHome">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="ইলেকট্রিশিয়ান, মেকানিক, এসি...">
+        </div>
+        <div class="section-title">ক্যাটাগরি</div>
+        <div class="categories" id="categoryList"></div>
+        <div class="section-title">সার্ভিস প্রোভাইডার</div>
+        <div class="worker-list" id="workerList"></div>
+      </div>
+
+      <!-- My bookings tab -->
+      <div id="custBookings" class="hidden">
+        <div class="section-title">আমার বুকিং</div>
+        <div id="custBookingList"></div>
+      </div>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-ctab="home"><i class="fa-solid fa-house"></i>হোম</button>
+      <button class="nav-item" data-ctab="bookings"><i class="fa-solid fa-calendar-check"></i>আমার বুকিং</button>
+    </nav>
+  </section>
+
+  <!-- ===== WORKER VIEW ===== -->
+  <section id="workerView" class="hidden">
+    <header class="topbar">
+      <div><h2 id="workGreeting">ড্যাশবোর্ড</h2><small id="workSub"></small></div>
+      <button class="logout-btn" data-logout><i class="fa-solid fa-right-from-bracket"></i> লগআউট</button>
+    </header>
+    <main class="container">
+      <div class="stats">
+        <div class="stat"><b id="stPending">0</b><span>নতুন রিকোয়েস্ট</span></div>
+        <div class="stat"><b id="stDone">0</b><span>সম্পন্ন কাজ</span></div>
+        <div class="stat"><b id="stEarn">৳0</b><span>মোট আয়</span></div>
+      </div>
+      <div class="section-title">বুকিং রিকোয়েস্ট</div>
+      <div id="workBookingList"></div>
+    </main>
+  </section>
+
+  <!-- ===== BOOKING MODAL ===== -->
+  <div id="bookModal" class="modal hidden">
+    <div class="modal-box">
+      <div id="bookFormBox">
+        <h3 id="bmTitle">বুকিং করুন</h3>
+        <p class="sub" id="bmSub"></p>
+        <form id="bookForm" novalidate>
+          <div class="field">
+            <label>তারিখ ও সময়</label>
+            <input type="datetime-local" id="bkDate">
+          </div>
+          <div class="field">
+            <label>ঠিকানা</label>
+            <input type="text" id="bkAddress" placeholder="বাসা/রোড/এলাকা">
+          </div>
+          <div class="field">
+            <label>সমস্যার বিবরণ</label>
+            <textarea id="bkNote" rows="3" placeholder="কী সমস্যা সংক্ষেপে লিখুন"></textarea>
+          </div>
+          <div class="err" id="bookErr"></div>
+          <button type="submit" class="btn btn-primary">বুকিং নিশ্চিত করুন</button>
+          <button type="button" class="btn btn-light" id="bkCancel" style="margin-top:8px">বাতিল</button>
+        </form>
+      </div>
+      <div id="bookSuccessBox" class="success-box hidden">
+        <i class="fa-solid fa-circle-check"></i>
+        <h3>বুকিং সফল হয়েছে!</h3>
+        <p class="sub">ওয়ার্কার আপনার রিকোয়েস্ট দেখে শীঘ্রই কনফার্ম করবেন।</p>
+        <button class="btn btn-primary" id="bkDone">ঠিক আছে</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
 </html>

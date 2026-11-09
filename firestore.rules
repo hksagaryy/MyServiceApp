@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{uid} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && request.auth.uid == uid;
+    }
+
+    match /bookings/{id} {
+      allow create: if request.auth != null
+                    && request.resource.data.customerId == request.auth.uid;
+      allow read: if request.auth != null
+                  && (resource.data.customerId == request.auth.uid
+                      || resource.data.workerId == request.auth.uid);
+      allow update: if request.auth != null
+                    && resource.data.workerId == request.auth.uid;
+    }
+  }
+}
